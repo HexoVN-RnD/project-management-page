@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "727849494782",
+    "project_id": "focal-rig-402013",
+    "storage_bucket": "focal-rig-402013.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727849494782:android:37bdee1af226b4e9989daf",
+        "android_client_info": {
+          "package_name": "com.example.demo_page"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMby5aIrWe-r9sE0thNS2Fp58IzPbkHR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727849494782:android:f1ceacf7bbeb1208989daf",
+        "android_client_info": {
+          "package_name": "com.example.flutter_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMby5aIrWe-r9sE0thNS2Fp58IzPbkHR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727849494782:android:77e55f27c70f25fe989daf",
+        "android_client_info": {
+          "package_name": "com.example.projmanager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMby5aIrWe-r9sE0thNS2Fp58IzPbkHR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
