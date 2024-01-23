@@ -1,21 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo_page/pallete.dart';
 import 'package:flutter/material.dart';
-import '../Project.dart';
-import '../functions.dart';
-import '../homepage.dart';
+import 'Project.dart';
+import 'functions.dart';
+import 'homepage.dart';
 
 
-
-class MobileBody extends StatefulWidget {
-  const MobileBody({Key? key}) : super(key: key);
+class DesktopBody extends StatefulWidget {
+  const DesktopBody({Key? key}) : super(key: key);
 
   @override
-  State<MobileBody> createState() => _MobileBodyState();
+  State<DesktopBody> createState() => _DesktopBodyState();
 }
 
-class _MobileBodyState extends State<MobileBody> {
+class _DesktopBodyState extends State<DesktopBody> {
   TextEditingController searchController = TextEditingController();
+  // bool isDarkMode = false;
   final String lightModeLogo = "assets/images/logo.png";
   final String darkModeLogo = "assets/images/logo2.png";
   bool isSettingsVisible = false;
@@ -26,10 +26,12 @@ class _MobileBodyState extends State<MobileBody> {
   }
 
   List<Project> listResult = [];
-  List<Project> listProjects = [];
 
   void fetchData() async {
     try {
+      // Clear the existing data before fetching new data
+      listProjects.clear();
+
       // Replace 'your_collection_name' with the actual name of your Firestore collection
       QuerySnapshot querySnapshot =
       await FirebaseFirestore.instance.collection('Project').get();
@@ -38,8 +40,7 @@ class _MobileBodyState extends State<MobileBody> {
       List<DocumentSnapshot> documents = querySnapshot.docs;
       for (var document in documents) {
         // Access document data using document.data() method
-        Map<String, dynamic> data =
-        document.data() as Map<String, dynamic>;
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
         setState(() {
           listProjects.add(Project(
               id: document.id,
@@ -71,64 +72,96 @@ class _MobileBodyState extends State<MobileBody> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: itemColor),
         backgroundColor: appbarColor,
-        title: Row(
-          children: [
-            Image.asset(
-              isDarkMode ? 'assets/images/logo.png' : 'assets/images/logo2.png',
-              filterQuality: FilterQuality.none,
-              height: 50,
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  PopupMenuButton(
-                    icon: const Icon(Icons.filter_list),
-                    color: appbarColor,
-                    onSelected: (value) async {
-                      if (value != 1) {
-                        List<Project> filteredProjects =
-                        await filterStatus(value);
-                        setState(() {
-                          listResult = filteredProjects;
-                        });
-                      } else {
-                        setState(() {
-                          listResult = List.from(listProjects);
-                        });
-                      }
-                    },
-                    itemBuilder: (BuildContext bc) {
-                      return [
-                        PopupMenuItem(
-                          child: Text(
-                            "Filter Project On",
-                            style: TextStyle(color: itemColor),
-                          ),
-                          value: true,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            "Filter Project Off",
-                            style: TextStyle(color: itemColor),
-                          ),
-                          value: false,
-                        ),
-                        PopupMenuItem(
-                          child: Text(
-                            "Show All",
-                            style: TextStyle(color: itemColor),
-                          ),
-                          value: 1,
-                        )
-                      ];
-                    },
-                  )
-                ],
+        title: Row(children: [
+          Image.asset(
+            isDarkMode ? 'assets/images/logo.png' : 'assets/images/logo2.png',
+            filterQuality: FilterQuality.none,
+            height: 50,
+          ),
+          Expanded(
+            child: Center(
+              child: SizedBox(
+                height: 40,
+                width: 450,
+                child: TextField(
+                  style: TextStyle(color: itemColor),
+                  controller: searchController,
+                  onChanged: (value) {
+                    setState(() {
+                      listResult = searchData(value);
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Search",
+                    hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w100),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Pallete.borderColor,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                      borderSide: const BorderSide(
+                        width: 1,
+                        color: Pallete.cyan,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+          PopupMenuButton(
+              icon: const Icon(Icons.filter_list),
+              color: appbarColor,
+              onSelected: (value) async {
+                if (value != 1) {
+                  List<Project> filteredProjects = await filterStatus(value);
+                  setState(() {
+                    listResult = filteredProjects;
+                  });
+                } else {
+                  setState(() {
+                    listResult = listProjects;
+                  });
+                }
+              },
+              itemBuilder: (BuildContext bc) {
+                return [
+                  PopupMenuItem(
+                    child: Text(
+                      "Filter Project On",
+                      style: TextStyle(color: itemColor),
+                    ),
+                    value: true,
+                  ),
+                  PopupMenuItem(
+                    child: Text(
+                      "Filter Project Off",
+                      style: TextStyle(color: itemColor),
+                    ),
+                    value: false,
+                  ),
+                  PopupMenuItem(
+                    child: Text(
+                      "Show All",
+                      style: TextStyle(color: itemColor),
+                    ),
+                    value: 1,
+                  )
+                ];
+              })
+        ]),
       ),
       drawer: Drawer(
         backgroundColor: appbarColor,
@@ -191,55 +224,13 @@ class _MobileBodyState extends State<MobileBody> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15,left: 15),
-            child: SizedBox(
-              height: 40,
-              width: 450,
-              child: TextField(
-                style: TextStyle(color: itemColor),
-                controller: searchController,
-                onChanged: (value) {
-                  setState(() {
-                    listResult = searchData(value);
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: "Search",
-                  hintStyle: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                      fontWeight: FontWeight.w100),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50.0),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Pallete.borderColor,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50.0),
-                    borderSide: const BorderSide(
-                      width: 1,
-                      color: Pallete.cyan,
-                    ),
-                  ),
-                ),
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 15,
             ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Expanded(
-            child: ListView.builder(
+            ListView.builder(
               shrinkWrap: true,
               itemCount: listResult.length,
               itemBuilder: (context, index) {
@@ -266,8 +257,8 @@ class _MobileBodyState extends State<MobileBody> {
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
